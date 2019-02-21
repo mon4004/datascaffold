@@ -1,0 +1,222 @@
+---
+title: "Introduction to Data_Scaffold"
+author: "Charlene Thomas, Ryan Duggan, and Monica Navas"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{"Introduction to Data_Scaffold"}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  fig.align='center',
+  comment = "#>"
+  )
+library(dplyr)
+library(ggplot2)
+library(multcomp)
+```
+
+## Abstract 
+
+`datascaffold` is an R-package for data summarization and visualization that produces figures and tables in a format commonly used in scientific reports. `datascaffold` has five functions: `scaff_boxplot`, `scaff_sumtable`, `scaff_diagnostics`, `scaff_comparisons`, and `scaff_pvnot`. When needed, the output produced by `datascaffold` can always be further customized at its user’s discretion, which makes the function universal and non-restrictive. In conjunction with one another, these functions allow users to quickly report their findings in a concise and effect manner that is easily digestible to its audience.
+
+
+## Introduction
+
+When conducting data analysis as a biostatistician, there are several common tasks that can become repetitive and time-consuming if they are not routinized:
+
+* Creating "table one" style summary statistics outputs to summarize variables of interest across groups or categories.
+
+* Generate ggplot2-style boxplots to visualize summary statistics and make comparisons between groups or categories. 
+
+* Generate customizable ggplot2-style diagnostic plots to assess the validity of linear models and to output for inclusion in reports.
+
+* Efficiently conduct multiple comparison tests of linear hypotheses based on user-defined contrast matricies and output the results in a formattable table.
+
+* Converting p-values from long scientific notation to a form that is more widely accepted in academic journals. 
+
+This package was created in order to provide a framework (or scaffolding) for focusing on more profound analysis by providing functions to quickly produce summary statistics, linear model diagnostics plots, between-group comparison plots, and linear hypothesis tests for multiple comparisons. 
+
+Demonstration of the capabilities of the Data Scaffolding package will be done using the built-in `iris` dataset:
+
+```{r}
+names(iris)
+str(iris)
+head(iris)
+```
+
+## Summarize Data with `scaff_sumtable()`
+
+  When conducting analysis on a dataset, the first step is typically to generate descriptive statistics to compare between study groups. This data is often presented as the “Table One” in a publication, in which demographic characteristics are compared between groups to demonstrate that important potential confounds do not differ between groups. Additionally, descriptive statistics, including measurements of distribution and dispersion are often generated to succinctly report whether any outcomes or variables of interest differ between groups. While there are functions and packages in R that streamline the process of data wrangling and summarization, there is not one function that can accomplish this in a single step.
+
+  The function `scaff_sumtable()` was developed in order to address this shortcoming by providing a way to accomplish both goals in one step by both calculating summary statistics and outputting the results in a table that can be passed to a formatting command for publication or inclusion in a report. 
+  
+  `scaff_sumtable()` takes three arguments:
+    * `data`, a dataframe containing the variables to be analyzed
+    * `x`, a categorical or factor grouping variable 
+    * `y`, an outcome of interest to be compared between groups
+    
+  `scaff_sumtable()` will output a table comparing several statistics of `data$y` between the levels of factor `data$x`: group size (n), number of complete observations, mean, standard deviation, median, interquartile range, F-test significance p-value, and Kruskal-Wallis test p-value.
+  
+  
+**Example**
+
+```{r}
+datascaffold::scaff_sumtable(data = iris, x = Species, y = Sepal.Length)
+```
+
+The product of this function can be output as a table that can then be passed to a formatting function such as `kable()`:
+
+```{r}
+irisTbl <- datascaffold::scaff_sumtable(data = iris, x = Species, y = Sepal.Length)
+
+irisTbl %>%
+  knitr::kable()
+
+irisTbl %>%
+  flextable::regulartable()
+```
+
+## Automatically Generate Customizable Summary Boxplots Plots with `scaff_boxplot()`
+
+`scaff_boxplot()` uses a similar syntax as `scaff_sumtable`, with the output being a boxplot of the data instead of a table of summary statistics. The function takes optional inputs `xname` and `yname`, which are used to annotate the plot title and axis labels. If no values are supplied to either of these parameters, the function uses the variable names in the `data` dataframe in their place, thus creating a boxplot that is ready for publication.
+
+**Example**
+
+```{r fig.height=4, fig.width=4}
+datascaffold::scaff_boxplot(data = iris,x = Species ,y = Sepal.Length, xname = "Iris Species", yname = "Sepal Length")
+```
+
+The resuts of this function can be output to a ggplot object that can then be further customized:
+
+```{r fig.height=4, fig.width=4}
+irisPlot <- datascaffold::scaff_boxplot(data = iris,x = Species ,y = Sepal.Length, xname = "Iris Species", yname = "Sepal Length")
+
+irisPlot +
+  geom_point() +
+  scale_fill_brewer(palette = "Pastel1")
+```
+
+## Automatically Generate Customizable Linear Model Diagnostic Plots with `scaff_diagnostics()`
+
+  Although the default R `stats` package contains a function to output diagnostic plots for linear model (lm) objects – the `plot.lm()` function – these plots cannot be easily and intuitively modified in the way that a ggplot can be customized. While the output of `plot.lm()` are interpretable and in that sense are “ready-to-publish,” they are generic and accordingly would not stand out in a publication.
+  
+  The function `scaff_diagnostics()` thus seeks to provide a method of integrating the functionality of the ggplot2 package in producing regression diagnostic plots that can easily be customized and output into a report or publication.
+  
+  `scaff_diagnostics()` takes two arguments:
+    *`LMinput`, an object or list created by a linear model fitting function (`lm` or `aov`)
+    *`globaloutput` an optional logical that if set to TRUE returns a list called `scaffDiagnosticPlots` to the global environment that contains the ggplot objects created by the function. If FALSE, the plots are arranged and output using the `grid.arrange()` function from the `gridExtra` package.
+
+**Example**
+
+```{r ,fig.align='left',fig.height=4, fig.width=7}
+irisLM <- lm(Sepal.Length ~ Species, data = iris)
+
+datascaffold::scaff_diagnostics(irisLM, globaloutput = FALSE)
+```
+
+## Quickly Conduct Linear Hypothesis Testing and Multiple Comparisons with `scaff_comparison()`
+
+When doing multiple comparison for a general linear regression, the report of the results is not easy to do with existing packages. To generate a table with information relevant for a report, information is taken from different functions such as `glht()`, `lm()`, `confint()`. The `scaff_comparison()` will allow the user to generate a data frame with important results of multiple comparisons of a general linear regression model that can be used to create a useful table for publication or scientific report.
+
+`scaff_comparison()` will report the estimates of the multiple comparisons for general linear regression depending on the contrast matrix used, the confidence interval of that estimate, the p-value with no adjustment method, and the p-value with the adjustment method defined (i.e "holm", "bonferroni", "Shaffer", "Westfall"). 
+
+  `scaff_diagnostics()` takes 6 arguments:
+
+* `x`: Categorical Predictor, this variable will be converted into a factor if it is not already one, and will be the variable used to predict to outcome of interest. It is also the variable used for the contrast matrix. 
+
+* `y`: Outcome of Interest, this variable is continuous and it is the outcome that will be analyzed in the multiple regression comparison. 
+
+* `matrix`: the matrix required for the multiple comparison. This matrix must be done previously by the user, there are function in R such as `multcomp::contrMat()` that will generate a matrix for multiple comparison depending on the method used, or manually done by the user.
+
+* `padj`: type of p-value adjustment method, i.e: "holm", "bonferroni", "Westfall", "Shaffer", etc. Default is set to use "holm"
+
+* `conf.level`: level of confidence desired by user.  Default  is set to 0.95.
+
+* `weights`: an optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector. If non-NULL, weighted least squares is used with weights weights; otherwise ordinary least squares is used. Default = NULL.
+
+**Example**
+
+Two matrices are created to use as an example with the `scaff_comparison()` function, as well as a numeric vector name `wts` for the weights.
+
+```{r}
+#Creating two different matrix for the function
+tukey <- multcomp::contrMat(table(iris$Species),"Tukey")
+i <- rbind("Setosa-Versicolor" = c(1,-1,0),
+           "Setosa-Virginica" = c(1,0,-1),
+           "Versicolor-Virginica" = c(0,1,-1))
+wts <- 1/rep(tapply(iris$Sepal.Width, iris$Species, var),c(50,50,50))
+```
+
+`iris_tukey` will be created as a data frame using the matrix created above, using the default options of the function. 
+
+```{r}
+iris_tukey<- 
+  datascaffold::scaff_comparison(iris$Species, 
+                   iris$Sepal.Width, 
+                   matrix = tukey) 
+iris_tukey %>% 
+  knitr::kable(.) %>% 
+  kableExtra::kable_styling(.)
+
+```
+
+As seen in the table above estimate, 95% confidence interval, and p-values of non adjusted and holm adjusted method are reported in a table useful for publication.
+
+`iris_matrix` uses the matrix created manually above, with the weights modified with the numerical vector `wts`, a p-adjustment method of "bonferroni" and a confidence level of 90%. 
+
+```{r}
+iris_matrix <- 
+  datascaffold::scaff_comparison(iris$Species, 
+                   iris$Sepal.Width, 
+                   matrix = i, 
+                   weight = wts,  
+                   padj = "bonferroni", 
+                   conf.level = 0.90)
+
+iris_matrix %>% 
+  knitr::kable(.) %>% 
+  kableExtra::kable_styling()
+```
+
+## Rounding P-Values Appropriate for Academic Journals with `pvnot`
+
+`scaff_pvnot` allows users to print p-values that are less than 0.001 as '<0.001' in any table/data frame/etc and will also automatically round all other p-values to 2 digits.  Normally, R will output large numbers in scientific notation. However, this value is not always accurate as the data itself is not collected with such precision. Thus, our function helps to reduce false precision.  Please note, this function will convert numeric values to character values.
+
+**Example** 
+
+Rounding p-values less than 0.001 to <0.001:
+```{r}
+datascaffold::scaff_pvnot(9.8E-9)
+```
+
+Rounding p-values to 2 digit numbers:
+
+```{r}
+datascaffold::scaff_pvnot(0.0933238283)
+```
+
+## Contributions
+
+All three authors worked together in the creation of this package. Charlene Thomas worked on implementing every step of the package design process, as well as the `scaff_boxplot` function. Ryan Duggan worked on the creation of `scaff_sumtable` and `scaff_diagnostics` functions. Monica Navas worked on the `scaff_comparison` and `scaff_pval` functions. 
+
+All three worked together on the creation of the vignette document as well as putting final touches on the R package. 
+
+We hope you enjoy scaffolding data as much as we do. 
+
+## References 
+
+1. Broman, K. (n.d.). R package primer. Retrieved February 20, 2019, from https://kbroman.org/pkg_primer/
+
+2. Fong, C. (2015, July 26). Making Your First R Package. Retrieved February 20, 2019, from http://tinyheero.github.io/jekyll/update/2015/07/26/making-your-first-R-package.html
+
+3. Parker, H. (2014, April 30). Writing an R package from scratch. Retrieved February 20, 2019, from https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/
+
+4. Verzani, J., & Matloff, N. (2018, July 1). The R Journal, Volume 10. Retrieved February 20, 2019, from https://journal.r-project.org/archive/2018-1/
+
+5. Wickham, H. (2015, April). R packages (ebook). Retrieved February 20, 2019, from http://r-pkgs.had.co.nz/
