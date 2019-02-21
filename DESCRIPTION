@@ -7,7 +7,7 @@ Description: This package works for data summarization and visualization that pr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Depends: 
     dplyr,
     ggplot2,
     rlang,
