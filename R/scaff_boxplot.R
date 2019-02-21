@@ -12,8 +12,8 @@
 #' @export
 scaff_boxplot <- function(data, x, y, xname = NULL, yname = NULL) {
 #Returning x and y as quosures to be passed into linear model formula object
-  x <- enquo(x)
-  y <- enquo(y)
+  x <- dplyr::enquo(x)
+  y <- dplyr::enquo(y)
 
 #Checking if user provided xname and yname, if unspecified the function returns the names of data$x and data$y
 
@@ -27,7 +27,7 @@ scaff_boxplot <- function(data, x, y, xname = NULL, yname = NULL) {
 
 
   #Use ggplot function to create and customize plot
-  summary_plot <- ggplot(data, aes(
+  summary_plot <- ggplot2::ggplot(data, aes(
     x = !!x,
     y = !!y,
     fill = !!x
