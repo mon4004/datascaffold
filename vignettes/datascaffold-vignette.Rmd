@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Data_Scaffold"
+title: "Introduction to `datascaffold`"
 author: "Charlene Thomas, Ryan Duggan, and Monica Navas"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -51,6 +51,16 @@ names(iris)
 str(iris)
 head(iris)
 ```
+
+## Load the package 
+
+`datascaffold` package has bien uploaded to git_hub. To install the package it is necessary to use  `devtools` package. This is the example of how to install it. 
+ 
+```{r message=FALSE, warning=FALSE}
+devtools::install_github('mon4004/datascaffold')
+library(datascaffold)
+```
+
 
 ## Summarize Data with `scaff_sumtable()`
 
