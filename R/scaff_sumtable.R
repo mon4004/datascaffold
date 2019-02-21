@@ -8,9 +8,9 @@
 #' @param y Outcome of Interest
 #' @examples
 #' scaff_sumtable(data = iris, x = Sepal.Length, y = Species)
+#' @import dplyr tibble
 #' @export
 scaff_sumtable <- function(data, x, y) {
-
   #Returning x and y as quosureS to be passed into linear model formula object
   x <- dplyr::enquo(x)
   y <- dplyr::enquo(y)

@@ -22,6 +22,7 @@
 #' i <- rbind("Setosa-Versicolor" = c(1,-1,0),"Setosa-Virginica" = c(1,0,-1),"Versicolor-Virginica" = c(0,1,-1))
 #' scaff_comparison(iris$Species, iris$Sepal.Width, matrix = tukey, padj = "holm", conf.level = 0.95)
 #' scaff_comparison(iris$Species, iris$Sepal.Width, matrix = i, padj = "bonferroni", conf.level = 0.90)
+#' @import multcomp
 #' @export
 scaff_comparison <-
   function(x, y, weight = NULL, matrix, padj = "holm", conf.level = 0.95) {
