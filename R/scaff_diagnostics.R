@@ -8,8 +8,10 @@
 #' @examples
 #' lmOut <- lm(Sepal.Length ~ Species, data = iris)
 #' scaff_diagnostics(lmOut)
+#' @import dplyr ggplot2 gridExtra broom
 #' @export
 scaff_diagnostics <- function(LMinput, globaloutput = FALSE) {
+  .fitted <- .resid <- .stdresid <- .std.resid <- NULL
   df <- broom::augment(LMinput)
 
 

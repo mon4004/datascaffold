@@ -3,7 +3,7 @@
 \name{scaff_comparisons}
 \alias{scaff_comparisons}
 \alias{scaff_comparison}
-\title{Creating Table of Multiple Comparison for General Linear Regression}
+\title{Creating Table of Multiple Comparisons for General Linear Regression}
 \usage{
 scaff_comparison(x, y, weight = NULL, matrix, padj = "holm",
   conf.level = 0.95)
@@ -15,25 +15,25 @@ scaff_comparison(x, y, weight = NULL, matrix, padj = "holm",
 
 \item{matrix}{the matrix required for the multiple comparison}
 
-\item{padj}{type of p-value adjustment method example: "holm", "bonferroni", "Westfall", "Shaffer", etc.
+\item{padj}{type of p-value adjustment method; example: "holm", "bonferroni", "Westfall", "Shaffer", etc.
 Default = "holm"}
 
-\item{conf.level}{level of confidence requiered to calculate default = 0.95.}
+\item{conf.level}{level of confidence requiered to calculate; default = 0.95.}
 
 \item{weights}{an optional vector of weights to be used in the fitting process.
 Should be NULL or a numeric vector. If non-NULL, weighted least squares is used
-with weights weights (that is, minimizing sum(w*e^2)); otherwise ordinary least squares is used.
+with weights weights; otherwise ordinary least squares is used.
 Default = NULL.}
 }
 \description{
-This function allows you to create a dataframe with different information of a multiple comparison general linear regression, that
-later can be recreated to a table using different styles for publication or formal reports. The function
-will create a multiple comparison of a factor variable to a continious variable using general linear regression.
-It will generate a table with the estimate of the multiple comparison between factor groups, the confidence interval,
+This function allows you to create a dataframe with computation of multiple comparisons for general linear regression, which
+can then be output to a table using different styles for publication or scientific reports. The function
+conducts multiple comparison of a factor variable to a continious variable using general linear regression.
+It will generate a table with the estimates for the multiple comparison between factor groups, the confidence intervals,
 and the p-value of that parameter, with the possibility of using adjusting p-value methods.
 }
 \examples{
-Creating two different matrix for the function
+Creating two different matrices for the function
 tukey <- contrMat(table(iris$Species),"Tukey")
 i <- rbind("Setosa-Versicolor" = c(1,-1,0),"Setosa-Virginica" = c(1,0,-1),"Versicolor-Virginica" = c(0,1,-1))
 scaff_comparison(iris$Species, iris$Sepal.Width, matrix = tukey, padj = "holm", conf.level = 0.95)

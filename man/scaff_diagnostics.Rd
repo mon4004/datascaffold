@@ -9,7 +9,7 @@ scaff_diagnostics(LMinput, globaloutput = FALSE)
 \arguments{
 \item{LMinput}{Object created by linear model fitting function to be passed into diagnostic plots}
 
-\item{globaloutput}{An optional logical indicating whether the ggplot objects should be output to global environment in as a list}
+\item{globaloutput}{An optional logical indicating whether the ggplot objects should be output to global environment as a list}
 }
 \description{
 This function takes an input of a linear object model and uses ggplot to output typical model diagnostic plots.

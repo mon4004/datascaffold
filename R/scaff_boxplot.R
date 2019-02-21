@@ -9,6 +9,7 @@
 #' @param xyname (Optional) Name of Outcome of Interest you would like displayed in the plot. If not specified, the name of data$y is used instead.
 #' @examples
 #' scaff_boxplot(data = iris,x = Species ,y = Sepal.Length, xname = "Iris Species", yname = "Sepal Length")
+#' @import dplyr ggplot2 rlang
 #' @export
 scaff_boxplot <- function(data, x, y, xname = NULL, yname = NULL) {
 #Returning x and y as quosures to be passed into linear model formula object

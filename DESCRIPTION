@@ -2,7 +2,8 @@ Package: datascaffold
 Type: Package
 Title: A Statistical and Visual Scaffolding for Data Analysis
 Version: 0.1.0
-Authors: Charlene Thomas, Ryan Duggan, Monica Navas
+Author: Charlene Thomas, Ryan Duggan, Monica Navas
+Maintainer: Ryan Duggan <rcd3001@med.cornell.edu>
 Description: This package works for data summarization and visualization that produces figures and tables in a format commonly used in scientific reports. It includes five functions: scaff_boxplot, scaff_sumtable, scaff_diagnostics, scaff_comparisons, and scaff_pvnot.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -13,7 +14,8 @@ Depends:
     rlang,
     multcomp,
     broom,
-    tibble
+    tibble,
+    gridExtra
 Suggests:
     knitr,
     rmarkdown
