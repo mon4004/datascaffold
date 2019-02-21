@@ -19,6 +19,8 @@ knitr::opts_chunk$set(
 library(dplyr)
 library(ggplot2)
 library(multcomp)
+library(kableExtra)
+library(flextable)
 ```
 
 ## Abstract 
@@ -220,3 +222,5 @@ We hope you enjoy scaffolding data as much as we do.
 4. Verzani, J., & Matloff, N. (2018, July 1). The R Journal, Volume 10. Retrieved February 20, 2019, from https://journal.r-project.org/archive/2018-1/
 
 5. Wickham, H. (2015, April). R packages (ebook). Retrieved February 20, 2019, from http://r-pkgs.had.co.nz/
+
+6. Jiddu, A. (2016, June 10). Building R Packages with Devtools. Retrieved February 20, 2019, from http://www.jiddualexander.com/blog/r-package-building/
